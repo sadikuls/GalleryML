@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -47,13 +46,13 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
                 Status.LOADING -> {
                     showLoader()
-                    Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                    //Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
                     Log.d(TAG,"gallery-app loading started")
                 }
 
                 Status.ERROR -> {
                     hideLoader(false)
-                    Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                    //Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
                     Log.d(TAG, "gallery-app got error")
                 }
             }
