@@ -1,4 +1,4 @@
-package com.pactice.hild_mvvm_room.ui.main.view.fragment
+package com.sadikul.gallerymlbd.ui.view.fragment
 
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +17,6 @@ import com.sadikul.gallerymlbd.databinding.FragmentGalleryBinding
 import com.sadikul.gallerymlbd.ui.adapter.GalleryAdapter
 import com.sadikul.gallerymlbd.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_gallery.*
 
 @AndroidEntryPoint
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
@@ -73,7 +72,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     private fun setupRecyclerView() {
         _binding.galleryRecyclerview.apply {
-            galleryAdapter = GalleryAdapter(galleryList)
+            galleryAdapter = GalleryAdapter(galleryList){ id ->
+                navigateToImagePreview(id)
+            }
             layoutManager = GridLayoutManager(context, 2)
             adapter = galleryAdapter
         }
@@ -88,5 +89,12 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 Log.d("updateData", "Yes ${images.size}")
             }
         }
+    }
+
+    private fun navigateToImagePreview(imgId: Int) {
+        NavHostFragment.findNavController(this@GalleryFragment).navigate(
+            R.id.action_galleryFragment_to_imageShowFragment,
+            bundleOf(imgIdArgs to imgId)
+        )
     }
 }

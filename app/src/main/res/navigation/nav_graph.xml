@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/galleryFragment">
 
     <fragment
         android:id="@+id/galleryFragment"
-        android:name="com.pactice.hild_mvvm_room.ui.main.view.fragment.GalleryFragment"
+        android:name="com.sadikul.gallerymlbd.ui.view.fragment.GalleryFragment"
         android:label="GalleryFragment" >
+
+        <action
+            android:id="@+id/action_galleryFragment_to_imageShowFragment"
+            app:destination="@id/imageShowFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageShowFragment"
+        android:name="com.sadikul.gallerymlbd.ui.view.fragment.ImageShowFragment"
+        android:label="ImageShow"
+        tools:layout="@layout/fragment_image_show" >
+        <argument
+            android:name="imgId"
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
 
 </navigation>
