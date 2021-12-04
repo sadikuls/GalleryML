@@ -11,6 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mindorks.framework.mvvm.ui.main.viewmodel.GalleryViewModel
 import com.sadikul.gallerymlbd.R
+import com.sadikul.gallerymlbd.data.local.entity.GalleryItemEntity
 import com.sadikul.gallerymlbd.data.model.GalleryItem
 import com.sadikul.gallerymlbd.databinding.FragmentGalleryBinding
 import com.sadikul.gallerymlbd.ui.adapter.GalleryAdapter
@@ -22,7 +23,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     private val galleryViewModel : GalleryViewModel by viewModels()
     private lateinit var _binding : FragmentGalleryBinding
-    private val galleryList: MutableList<GalleryItem> by lazy { ArrayList<GalleryItem>() }
+    private val galleryList: MutableList<GalleryItemEntity> by lazy { ArrayList<GalleryItemEntity>() }
     private val TAG = GalleryFragment::class.java.simpleName
     private lateinit var galleryAdapter: GalleryAdapter
     private val imgIdArgs = "imgId"
@@ -79,7 +80,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         }
     }
 
-    private fun updateList(images: List<GalleryItem>) {
+    private fun updateList(images: List<GalleryItemEntity>) {
         images?.let {
             galleryList.apply {
                 clear()

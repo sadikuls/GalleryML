@@ -1,14 +1,20 @@
 package com.sadikul.gallerymlbd.di.module
+import android.content.Context
 import android.util.Log
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.pactice.hild_mvvm_room.dada.api.ApiHelper
 import com.pactice.hild_mvvm_room.dada.api.ApiHelperImpl
 import com.pactice.hild_mvvm_room.dada.api.ApiService
 import com.sadikul.gallerymlbd.BuildConfig
+import com.sadikul.gallerymlbd.data.local.AppDatabase
 import com.sadikul.gallerymlbd.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -20,6 +26,7 @@ import javax.inject.Singleton
 @InstallIn(ApplicationComponent::class)
 class ApplicationModule {
     val TAG = ApplicationModule::class.java.simpleName
+
     @Provides
     fun provideBaseUrl() = Constants.BASE_URL
 
@@ -65,4 +72,9 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext appContext: Context) = AppDatabase.getInstance(context = appContext)
+
 }

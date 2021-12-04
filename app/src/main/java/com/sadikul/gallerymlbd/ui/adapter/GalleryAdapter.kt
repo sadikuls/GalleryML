@@ -9,12 +9,13 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestOptions
 import com.sadikul.gallerymlbd.R
+import com.sadikul.gallerymlbd.data.local.entity.GalleryItemEntity
 import com.sadikul.gallerymlbd.data.model.GalleryItem
 import com.sadikul.gallerymlbd.databinding.ItemGalleryBinding
 import com.sadikul.gallerymlbd.utils.Constants.IMAGE_URL
 
 
-class GalleryAdapter(var galleryItemList: MutableList<GalleryItem>, val onClick: (Int) -> Unit) :
+class GalleryAdapter(var galleryItemList: MutableList<GalleryItemEntity>, val onClick: (Int) -> Unit) :
     RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder>() {
     init {
         Log.d("GalleryAdapter","called galleryAdapter")
@@ -29,7 +30,7 @@ class GalleryAdapter(var galleryItemList: MutableList<GalleryItem>, val onClick:
             }
         }
 
-        fun bind(galleryItem: GalleryItem) {
+        fun bind(galleryItem: GalleryItemEntity) {
             _binding.apply {
                 galleryItem.author?.let {
                     authorName.text = it
