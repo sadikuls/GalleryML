@@ -40,8 +40,8 @@ class GalleryAdapter(var galleryItemList: MutableList<GalleryItemEntity>, val on
                 Glide.with(ivGallery)
                     .load(IMAGE_URL + galleryItem.id + "/400/400")
                     .apply(
-                        RequestOptions().transform(FitCenter()).placeholder(R.mipmap.ic_launcher)
-                            .error(R.mipmap.ic_launcher).priority(Priority.HIGH)
+                        RequestOptions().transform(FitCenter()).placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder).priority(Priority.HIGH)
                     )
                     .into(ivGallery)
             }

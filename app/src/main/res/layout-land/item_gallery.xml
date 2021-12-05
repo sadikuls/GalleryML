@@ -14,7 +14,7 @@
         <ImageView
             android:id="@+id/ivGallery"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/size_100dp"
+            android:layout_height="@dimen/size_200dp"
             android:src="@drawable/download"
             android:scaleType="centerCrop"/>
 

@@ -46,17 +46,17 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         _binding = FragmentGalleryBinding.bind(view)
         setupRecyclerView()
         setupObserver()
-        galleryViewModel.fetchImages(pageNumber = pageNumber, limit = viewThreshold)
+        if(galleryList.size == 0) galleryViewModel.fetchImages(pageNumber = pageNumber, limit = viewThreshold)
     }
 
     private fun setupObserver() {
-        Log.d(TAG," gallery-app setupObserver")
+        Log.d(TAG, " gallery-app setupObserver")
         galleryViewModel.images.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     hideLoader(true)
-                    it.data?.let {
-                            images -> updateList(images)
+                    it.data?.let { images ->
+                        updateList(images)
                     }
                 }
 
@@ -105,20 +105,25 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                     visibleItemCount = gridLayoutManager.childCount
                     totalItemCount = gridLayoutManager.itemCount
                     pastVisibleItems = gridLayoutManager.findFirstVisibleItemPosition()
-                    if(dy > 0){
-                        if(isLoading){
-                            if(totalItemCount > previousTotal)
-                            {
+                    if (dy > 0) {
+                        if (isLoading) {
+                            if (totalItemCount > previousTotal) {
                                 isLoading = false
                                 previousTotal = totalItemCount
                             }
                         }
-                        if(!isLoading && ((totalItemCount - visibleItemCount) <= pastVisibleItems + viewThreshold)){
+                        if (!isLoading && ((totalItemCount - visibleItemCount) <= pastVisibleItems + viewThreshold)) {
                             // fetch data
                             isLoading = true
-                            Log.d(TAG,"pagination fetch-data pageNumber $pageNumber viewThreshold $viewThreshold")
-                            galleryViewModel.fetchImages(pageNumber = pageNumber, limit = viewThreshold)
-                            pageNumber ++
+                            Log.d(
+                                TAG,
+                                "pagination fetch-data pageNumber $pageNumber viewThreshold $viewThreshold"
+                            )
+                            galleryViewModel.fetchImages(
+                                pageNumber = pageNumber,
+                                limit = viewThreshold
+                            )
+                            pageNumber++
                         }
                     }
                 }
@@ -141,7 +146,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     private fun navigateToImagePreview(item: GalleryItemEntity?) {
         NavHostFragment.findNavController(this@GalleryFragment).navigate(
             R.id.action_galleryFragment_to_imageShowFragment,
-            bundleOf(imgIdArgs to item?.id ,imgDownloadLinkArgs to item?.download_url, imageNameArgs to item?.author)
+            bundleOf(
+                imgIdArgs to item?.id,
+                imgDownloadLinkArgs to item?.download_url,
+                imageNameArgs to item?.author
+            )
         )
     }
 }
