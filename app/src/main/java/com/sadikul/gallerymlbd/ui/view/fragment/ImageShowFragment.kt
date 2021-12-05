@@ -3,6 +3,7 @@ package com.sadikul.gallerymlbd.ui.view.fragment
 import android.Manifest
 import android.app.DownloadManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -25,7 +26,6 @@ import com.kishan.askpermission.AskPermission
 import com.kishan.askpermission.PermissionCallback
 import com.sadikul.gallerymlbd.R
 import com.sadikul.gallerymlbd.databinding.FragmentImageShowBinding
-import com.sadikul.gallerymlbd.utils.Constants.IMAGE_URL
 
 
 class ImageShowFragment : Fragment(R.layout.fragment_image_show), PermissionCallback{
@@ -44,6 +44,9 @@ class ImageShowFragment : Fragment(R.layout.fragment_image_show), PermissionCall
             if (checkRuntimePermission()) {
                 downloadUsingAndroidDownloadManager()
             }
+        }
+        _binding.shareImage.setOnClickListener {
+            shareImage()
         }
 
     }
@@ -109,14 +112,24 @@ class ImageShowFragment : Fragment(R.layout.fragment_image_show), PermissionCall
     }
 
     fun downloadUsingAndroidDownloadManager(){
-        Log.d(TAG, "downloadUsingAndroidDownloadManager file-download url ${args.downloadLink} name ${args.imageName}")
+        Log.d(
+            TAG,
+            "downloadUsingAndroidDownloadManager file-download url ${args.downloadLink} name ${args.imageName}"
+        )
         val imageName = args.imageName+".jpeg"
         val dmrequest = DownloadManager.Request(Uri.parse(args.downloadLink))
             .setTitle(imageName)
-            .setDescription("Downloading "+ imageName)
+            .setDescription("Downloading " + imageName)
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, imageName)
         val manager =  requireActivity().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         manager.enqueue(dmrequest)
+    }
+
+    fun shareImage(){
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.setType("text/plain")
+        shareIntent.putExtra(Intent.EXTRA_TEXT, args.downloadLink)
+        startActivity(Intent.createChooser(shareIntent, "Share image using"))
     }
 }
