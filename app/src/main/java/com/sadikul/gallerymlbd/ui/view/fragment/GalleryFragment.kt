@@ -27,6 +27,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     private val TAG = GalleryFragment::class.java.simpleName
     private lateinit var galleryAdapter: GalleryAdapter
     private val imgIdArgs = "imgId"
+    private val imgDownloadLinkArgs = "downloadLink"
+    private val imageNameArgs = "imageName"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentGalleryBinding.bind(view)
@@ -72,8 +74,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     private fun setupRecyclerView() {
         _binding.galleryRecyclerview.apply {
-            galleryAdapter = GalleryAdapter(galleryList){ id ->
-                navigateToImagePreview(id)
+            galleryAdapter = GalleryAdapter(galleryList){ item ->
+                navigateToImagePreview(item)
             }
             layoutManager = GridLayoutManager(context, 2)
             adapter = galleryAdapter
@@ -91,10 +93,10 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         }
     }
 
-    private fun navigateToImagePreview(imgId: Int) {
+    private fun navigateToImagePreview(item: GalleryItemEntity?) {
         NavHostFragment.findNavController(this@GalleryFragment).navigate(
             R.id.action_galleryFragment_to_imageShowFragment,
-            bundleOf(imgIdArgs to imgId)
+            bundleOf(imgIdArgs to item?.id ,imgDownloadLinkArgs to item?.download_url, imageNameArgs to item?.author)
         )
     }
 }

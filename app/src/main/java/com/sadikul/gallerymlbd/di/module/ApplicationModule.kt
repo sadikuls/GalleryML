@@ -22,6 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+
 @Module
 @InstallIn(ApplicationComponent::class)
 class ApplicationModule {
@@ -60,7 +61,7 @@ class ApplicationModule {
         okHttpClient: OkHttpClient,
         BASE_URL: String
     ): Retrofit {
-        Log.d(TAG,"networking BASE_URL $BASE_URL")
+        Log.d(TAG, "networking BASE_URL $BASE_URL")
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)

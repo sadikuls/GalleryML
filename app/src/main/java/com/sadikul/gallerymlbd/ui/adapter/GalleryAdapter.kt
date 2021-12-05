@@ -15,7 +15,7 @@ import com.sadikul.gallerymlbd.databinding.ItemGalleryBinding
 import com.sadikul.gallerymlbd.utils.Constants.IMAGE_URL
 
 
-class GalleryAdapter(var galleryItemList: MutableList<GalleryItemEntity>, val onClick: (Int) -> Unit) :
+class GalleryAdapter(var galleryItemList: MutableList<GalleryItemEntity>, val onClick: (GalleryItemEntity?) -> Unit) :
     RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder>() {
     init {
         Log.d("GalleryAdapter","called galleryAdapter")
@@ -26,7 +26,7 @@ class GalleryAdapter(var galleryItemList: MutableList<GalleryItemEntity>, val on
 
         init {
             itemView.setOnClickListener {
-                onClick(galleryItemList[adapterPosition].id ?: -1)
+                onClick(galleryItemList[adapterPosition])
             }
         }
 

@@ -23,6 +23,12 @@
             android:name="imgId"
             android:defaultValue="-1"
             app:argType="integer" />
+        <argument
+            android:name="downloadLink"
+            app:argType="string" />
+        <argument
+            android:name="imageName"
+            app:argType="string" />
     </fragment>
 
 </navigation>
