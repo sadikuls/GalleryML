@@ -5,7 +5,6 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sadikul.gallerymlbd.data.local.entity.GalleryItemEntity
 import com.sadikul.gallerymlbd.data.repository.Repository
-import com.sadikul.gallerymlbd.utils.NetworkHelper
 import com.sadikul.gallerymlbd.utils.Resource
 import kotlinx.coroutines.launch
 
@@ -19,12 +18,11 @@ class GalleryViewModel @ViewModelInject constructor(
 
     init {
         Log.d(TAG,"$TAG gallery-app init block of viewmodel")
-        fetchUsers()
     }
 
-    private fun fetchUsers() {
+    fun fetchImages(pageNumber: Int, limit: Int) {
         viewModelScope.launch {
-                repository.getImages(galleryMutableLiveData)
+                repository.getImages(pageNumber, limit, galleryMutableLiveData)
         }
     }
 }

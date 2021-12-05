@@ -20,14 +20,16 @@ class Repository @Inject constructor(val apiService: ApiService, private val app
 ){
     private val TAG = Repository::class.java.simpleName
 
-    suspend fun getImages(imagesLiveData: MutableLiveData<Resource<List<GalleryItemEntity>>>) {
+    suspend fun getImages(pageNumber:Int, limit: Int, imagesLiveData: MutableLiveData<Resource<List<GalleryItemEntity>>>) {
         Log.d(TAG,"Networking getImages() ")
         imagesLiveData.postValue(Resource.loading(null))
         if (networkhelper.isNetworkConnected()) {
             Log.d(TAG,"Networking getImages() network available")
-            val serverResponse = apiService.getImages()
+            val serverResponse = apiService.getImages(pageNumber, limit)
             if (serverResponse.isSuccessful){
-                insertImagesToDb(processImages(serverResponse.body()), imagesLiveData)
+                val images = processImages(serverResponse.body())
+                insertImagesToDb(images, imagesLiveData)
+                imagesLiveData.postValue(Resource.success("images from server",images))
             } else getPhotoFromDb(imagesLiveData)
         }else{
             getPhotoFromDb(imagesLiveData)
@@ -70,10 +72,11 @@ class Repository @Inject constructor(val apiService: ApiService, private val app
                     }
                 }
                 if(insertionProcessDone){
-                    getPhotoFromDb(liveData)
+                    //getPhotoFromDb(liveData)
+                    Log.d(TAG,"Networking insertImagesToDb successfully inserted all items to db")
                 }
             }
-            else getPhotoFromDb(liveData)
+            //else getPhotoFromDb(liveData)
         }
     }
 
@@ -81,7 +84,7 @@ class Repository @Inject constructor(val apiService: ApiService, private val app
         Log.d(TAG,"Networking getPhotoFromDb() getting from local db")
         CoroutineScope(Dispatchers.Default).launch {
             try {
-                liveData.postValue(Resource.success(appDatabase.galleryDao().getAllPhotos()))
+                liveData.postValue(Resource.success("data from local-db",appDatabase.galleryDao().getAllPhotos()))
             }catch (exp: Exception){
                 liveData.postValue(Resource.error("Error on getting data from db",null))
             }

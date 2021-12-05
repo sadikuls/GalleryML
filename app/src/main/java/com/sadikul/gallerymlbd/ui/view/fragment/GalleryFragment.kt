@@ -9,14 +9,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.mindorks.framework.mvvm.ui.main.viewmodel.GalleryViewModel
 import com.sadikul.gallerymlbd.R
 import com.sadikul.gallerymlbd.data.local.entity.GalleryItemEntity
-import com.sadikul.gallerymlbd.data.model.GalleryItem
 import com.sadikul.gallerymlbd.databinding.FragmentGalleryBinding
 import com.sadikul.gallerymlbd.ui.adapter.GalleryAdapter
+import com.sadikul.gallerymlbd.utils.NetworkHelper
 import com.sadikul.gallerymlbd.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class GalleryFragment : Fragment(R.layout.fragment_gallery) {
@@ -29,11 +31,22 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     private val imgIdArgs = "imgId"
     private val imgDownloadLinkArgs = "downloadLink"
     private val imageNameArgs = "imageName"
+    private var isLoading = false
+    private var visibleItemCount = 0
+    private var totalItemCount = 0
+    private var pastVisibleItems = 0
+    private var previousTotal = 0
+    private var viewThreshold = 30
+    private var pageNumber = 0
+
+    @Inject lateinit var networkHelper: NetworkHelper
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentGalleryBinding.bind(view)
         setupRecyclerView()
         setupObserver()
+        galleryViewModel.fetchImages(pageNumber = pageNumber, limit = viewThreshold)
     }
 
     private fun setupObserver() {
@@ -50,7 +63,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 Status.LOADING -> {
                     showLoader()
                     //Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
-                    Log.d(TAG,"gallery-app loading started")
+                    Log.d(TAG, "gallery-app loading started")
                 }
 
                 Status.ERROR -> {
@@ -73,19 +86,51 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     }
 
     private fun setupRecyclerView() {
+        val gridLayoutManager = GridLayoutManager(context, 3)
         _binding.galleryRecyclerview.apply {
             galleryAdapter = GalleryAdapter(galleryList){ item ->
                 navigateToImagePreview(item)
             }
-            layoutManager = GridLayoutManager(context, 2)
+            layoutManager = gridLayoutManager
             adapter = galleryAdapter
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                }
+
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    visibleItemCount = gridLayoutManager.childCount
+                    totalItemCount = gridLayoutManager.itemCount
+                    pastVisibleItems = gridLayoutManager.findFirstVisibleItemPosition()
+                    if(dy > 0){
+                        if(isLoading){
+                            if(totalItemCount > previousTotal)
+                            {
+                                isLoading = false
+                                previousTotal = totalItemCount
+                            }
+                        }
+                        if(!isLoading && ((totalItemCount - visibleItemCount) <= pastVisibleItems + viewThreshold)){
+                            // fetch data
+                            isLoading = true
+                            Log.d(TAG,"pagination fetch-data pageNumber $pageNumber viewThreshold $viewThreshold")
+                            galleryViewModel.fetchImages(pageNumber = pageNumber, limit = viewThreshold)
+                            pageNumber ++
+                        }
+                    }
+                }
+            })
         }
+
     }
 
     private fun updateList(images: List<GalleryItemEntity>) {
         images?.let {
             galleryList.apply {
-                clear()
+                //clear()
                 addAll(it)
                 galleryAdapter.notifyDataSetChanged()
                 Log.d("updateData", "Yes ${images.size}")
