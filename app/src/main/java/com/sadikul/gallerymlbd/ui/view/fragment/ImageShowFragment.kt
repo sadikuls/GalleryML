@@ -9,8 +9,11 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -26,6 +29,7 @@ import com.kishan.askpermission.AskPermission
 import com.kishan.askpermission.PermissionCallback
 import com.sadikul.gallerymlbd.R
 import com.sadikul.gallerymlbd.databinding.FragmentImageShowBinding
+import kotlinx.android.synthetic.main.fragment_image_show.*
 
 
 class ImageShowFragment : Fragment(R.layout.fragment_image_show), PermissionCallback{
@@ -40,15 +44,41 @@ class ImageShowFragment : Fragment(R.layout.fragment_image_show), PermissionCall
         Log.d("FragmentImageShow", "onViewCreated previewFragment")
         _binding = FragmentImageShowBinding.bind(view)
         loadImage()
-        _binding.downloadImage.setOnClickListener {
+        _binding.tvImageName?.text = args.imageName
+        _binding.btnDownload?.setOnClickListener {
             if (checkRuntimePermission()) {
                 downloadUsingAndroidDownloadManager()
             }
         }
-        _binding.shareImage.setOnClickListener {
+        _binding.btnShare?.setOnClickListener {
             shareImage()
         }
 
+        _binding.buttonBack?.setOnClickListener {
+
+        }
+
+        _binding.ivPhoto.setOnClickListener({
+            _binding.apply {
+                layoutBottom?.visibility = View.VISIBLE
+                buttonBack?.visibility = View.VISIBLE
+                //activity?.getWindow()?.getDecorView()?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+            }
+
+            hideLayoutWithDelay()
+        })
+        hideLayoutWithDelay()
+    }
+
+    fun hideLayoutWithDelay(){
+        Handler().postDelayed({
+            _binding.apply {
+                layoutBottom?.visibility = View.GONE
+                buttonBack?.visibility = View.GONE
+                //activity?.getWindow()?.getDecorView()?.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_FULLSCREEN)
+            }
+
+        }, 5 * 1000)
     }
 
     fun checkRuntimePermission() : Boolean{
@@ -112,6 +142,7 @@ class ImageShowFragment : Fragment(R.layout.fragment_image_show), PermissionCall
     }
 
     fun downloadUsingAndroidDownloadManager(){
+        Toast.makeText(context, "Downloading...",Toast.LENGTH_LONG).show()
         Log.d(
             TAG,
             "downloadUsingAndroidDownloadManager file-download url ${args.downloadLink} name ${args.imageName}"

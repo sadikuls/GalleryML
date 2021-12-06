@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MLBD Gallery</string>
+    <string name="download">Download</string>
+    <string name="share">Share</string>
 </resources>

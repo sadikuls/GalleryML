@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -77,12 +78,12 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     private fun showLoader() = _binding?.apply {
         progrssBar.visibility = View.VISIBLE
-        galleryRecyclerview.visibility = View.GONE
+        //galleryRecyclerview.visibility = View.GONE
     }
 
     private fun hideLoader(showRecyclerview: Boolean) = _binding?.apply {
         progrssBar.visibility = View.GONE
-        galleryRecyclerview.visibility = if (showRecyclerview) View.VISIBLE else View.GONE
+        //galleryRecyclerview.visibility = if (showRecyclerview) View.VISIBLE else View.GONE
     }
 
     private fun setupRecyclerView() {
@@ -106,6 +107,10 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                     totalItemCount = gridLayoutManager.itemCount
                     pastVisibleItems = gridLayoutManager.findFirstVisibleItemPosition()
                     if (dy > 0) {
+                        if(!networkHelper.isNetworkConnected()){
+                            Toast.makeText(context, "Network not available..", Toast.LENGTH_LONG).show()
+                            return
+                        }
                         if (isLoading) {
                             if (totalItemCount > previousTotal) {
                                 isLoading = false
@@ -140,6 +145,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 galleryAdapter.notifyDataSetChanged()
                 Log.d("updateData", "Yes ${images.size}")
             }
+            _binding.tvNumberOfPhotos?.text = "${galleryList.size} Photos"
         }
     }
 
