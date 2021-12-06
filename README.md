@@ -1,6 +1,6 @@
 # GalleryML - Show images from the server with infinite scrolling & offline data sync functionality
 
-Overview of the project
+## Overview of the project
 
  - Show list of photos as gallery (Using picsumm api).
  - User is able to tap on the photo.
@@ -14,26 +14,33 @@ Overview of the project
  - The user is able to share the photo by tapping share button
 
  
-Technology used
+## Technology used
 
-- Room -> for store persistance data
-- Coroutine -> for background/long running task
-- Dagger-hilt -> Dependency injection
-- Retrofit -> For networking related task
-- GSON -> json parser/mapper
-- Glide -> For showing gallery image
-- View-Binding -> for bind view and set data
-- Navigation -> UI transaction
-- ProductFlavour -> for use different API on stage and production
-- DownloadManager -> for downloading image
+- **Room** -> for store persistance data
+- **Coroutine** -> for background/long running task
+- **Dagger-hilt** -> Dependency injection
+- **Retrofit** -> For networking related task
+- **GSON** -> json parser/mapper
+- **Glide** -> For showing gallery image
+- **View-Binding** -> for bind view and set data
+- **Navigation** -> UI transaction
+- **ProductFlavour** -> for use different API on stage and production
+- **DownloadManager** -> for downloading image
 
-Followed MVVM design pattern by following DRY principle
+## Project architecture
 
-Folder structure
- - data -> for data management related code
- - ui -> for activity,fragemnt,viewmodel,adapter etc UI related class
- - di -> for depencency injection related code
- - utils -> all utils code should be here
+## Followed MVVM design pattern by following DRY principle
 
+ - **data** -> for data management related code
+ - **ui** -> for activity,fragemnt,viewmodel,adapter etc UI related class
+ - **di** -> for depencency injection related code
+ - **utils** -> all utils code should be here
+
+# Things can be done to improve project performance
+
+- Pagination can be done with jetpack pagination library.
+- Instead of using livedata coroutine-flow can be used.
+- There is a better image loader library in kotlin called (Coil). Can be improved image loading using coil.
+- Better UI can be done, if i get some more time.
 
 
