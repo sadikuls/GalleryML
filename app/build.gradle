@@ -29,6 +29,27 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "api"
+
+    def BASE_URL = "BASE_URL"
+
+    productFlavors{
+        // This version is for debugging
+        create("staging"){
+            dimension = "api"
+            applicationIdSuffix ".dev"
+            buildConfigField "String", BASE_URL, '"https://picsum.photos/v2/"'
+        }
+        // this verion is for release
+        create("production"){
+            dimension = "api"
+            applicationIdSuffix ".pro"
+            buildConfigField "String", BASE_URL, '"https://picsum.photos/v2/"'
+        }
+    }
+
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

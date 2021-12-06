@@ -29,7 +29,7 @@ class ApplicationModule {
     val TAG = ApplicationModule::class.java.simpleName
 
     @Provides
-    fun provideBaseUrl() = Constants.BASE_URL
+    fun provideBaseUrl() = BuildConfig.BASE_URL
 
     @Provides
     fun provideTimeOutLimit() = Constants.TIME_OUT_LIMIT
