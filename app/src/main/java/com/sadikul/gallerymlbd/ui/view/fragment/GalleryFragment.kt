@@ -2,15 +2,15 @@ package com.sadikul.gallerymlbd.ui.view.fragment
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.mindorks.framework.mvvm.ui.main.viewmodel.GalleryViewModel
 import com.sadikul.gallerymlbd.R
 import com.sadikul.gallerymlbd.data.local.entity.GalleryItemEntity
@@ -38,7 +38,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     private var pastVisibleItems = 0
     private var previousTotal = 0
     private var viewThreshold = 30
-    private var pageNumber = 0
+    private var pageNumber = 1
 
     @Inject lateinit var networkHelper: NetworkHelper
 
@@ -47,7 +47,9 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         _binding = FragmentGalleryBinding.bind(view)
         setupRecyclerView()
         setupObserver()
-        if(galleryList.size == 0) galleryViewModel.fetchImages(pageNumber = pageNumber, limit = viewThreshold)
+        if(galleryList.size == 0) {
+            fetchData()
+        }
     }
 
     private fun setupObserver() {
@@ -107,8 +109,16 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                     totalItemCount = gridLayoutManager.itemCount
                     pastVisibleItems = gridLayoutManager.findFirstVisibleItemPosition()
                     if (dy > 0) {
-                        if(!networkHelper.isNetworkConnected()){
-                            Toast.makeText(context, "Network not available..", Toast.LENGTH_LONG).show()
+                        Log.d(
+                            "updateData",
+                            "Yes setupRecyclerView totalItemCount ${totalItemCount} visibleItemCount ${visibleItemCount} pastVisibleItems $pastVisibleItems"
+                        )
+                        if (!networkHelper.isNetworkConnected()) {
+                            _binding.rootLayout?.let {
+                                val snackbar = Snackbar
+                                    .make(it, "No internet connection.", Snackbar.LENGTH_LONG)
+                                snackbar.show()
+                            }
                             return
                         }
                         if (isLoading) {
@@ -119,16 +129,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                         }
                         if (!isLoading && ((totalItemCount - visibleItemCount) <= pastVisibleItems + viewThreshold)) {
                             // fetch data
-                            isLoading = true
-                            Log.d(
-                                TAG,
-                                "pagination fetch-data pageNumber $pageNumber viewThreshold $viewThreshold"
-                            )
-                            galleryViewModel.fetchImages(
-                                pageNumber = pageNumber,
-                                limit = viewThreshold
-                            )
-                            pageNumber++
+                            fetchData()
                         }
                     }
                 }
@@ -137,15 +138,31 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     }
 
+    private fun fetchData() {
+        isLoading = true
+        Log.d(
+            TAG,
+            "pagination fetch-data pageNumber $pageNumber viewThreshold $viewThreshold"
+        )
+        galleryViewModel.fetchImages(
+            pageNumber = pageNumber,
+            limit = viewThreshold
+        )
+        pageNumber++
+    }
+
     private fun updateList(images: List<GalleryItemEntity>) {
-        images?.let {
+        _binding.galleryRecyclerview.apply {
+            if(visibility != View.VISIBLE) visibility = View.VISIBLE
+        }
+        images.let {
             galleryList.apply {
                 //clear()
                 addAll(it)
                 galleryAdapter.notifyDataSetChanged()
                 Log.d("updateData", "Yes ${images.size}")
             }
-            _binding.tvNumberOfPhotos?.text = "${galleryList.size} Photos"
+            _binding.tvNumberOfPhotos.text = "${galleryList.size} Photos"
         }
     }
 

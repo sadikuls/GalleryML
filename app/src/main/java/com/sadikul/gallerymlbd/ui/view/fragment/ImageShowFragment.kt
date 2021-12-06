@@ -15,7 +15,9 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -44,30 +46,34 @@ class ImageShowFragment : Fragment(R.layout.fragment_image_show), PermissionCall
         Log.d("FragmentImageShow", "onViewCreated previewFragment")
         _binding = FragmentImageShowBinding.bind(view)
         loadImage()
-        _binding.tvImageName?.text = args.imageName
-        _binding.btnDownload?.setOnClickListener {
-            if (checkRuntimePermission()) {
-                downloadUsingAndroidDownloadManager()
-            }
-        }
-        _binding.btnShare?.setOnClickListener {
-            shareImage()
-        }
-
-        _binding.buttonBack?.setOnClickListener {
-
-        }
-
-        _binding.ivPhoto.setOnClickListener({
-            _binding.apply {
-                layoutBottom?.visibility = View.VISIBLE
-                buttonBack?.visibility = View.VISIBLE
-                //activity?.getWindow()?.getDecorView()?.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
-            }
-
-            hideLayoutWithDelay()
-        })
+        handleClickAction()
         hideLayoutWithDelay()
+    }
+
+    private fun handleClickAction() {
+        _binding.apply {
+            tvImageName?.text = args.imageName
+            btnDownload?.setOnClickListener {
+                if (checkRuntimePermission()) {
+                    downloadUsingAndroidDownloadManager()
+                }
+            }
+
+            btnShare?.setOnClickListener {
+                shareImage()
+            }
+
+            buttonBack?.setOnClickListener {
+                NavHostFragment.findNavController(this@ImageShowFragment).popBackStack()
+            }
+            ivPhoto.setOnClickListener({
+                _binding.apply {
+                    layoutBottom?.visibility = View.VISIBLE
+                    buttonBack?.visibility = View.VISIBLE
+                }
+                hideLayoutWithDelay()
+            })
+        }
     }
 
     fun hideLayoutWithDelay(){

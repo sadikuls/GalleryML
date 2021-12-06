@@ -21,13 +21,17 @@ class Repository @Inject constructor(val apiService: ApiService, private val app
     private val TAG = Repository::class.java.simpleName
 
     suspend fun getImages(pageNumber:Int, limit: Int, imagesLiveData: MutableLiveData<Resource<List<GalleryItemEntity>>>) {
-        Log.d(TAG,"Networking getImages() ")
+        Log.d(TAG,"Networking getImages() pageNumber $pageNumber")
         imagesLiveData.postValue(Resource.loading(null))
         if (networkhelper.isNetworkConnected()) {
             Log.d(TAG,"Networking getImages() network available")
             val serverResponse = apiService.getImages(pageNumber, limit)
             if (serverResponse.isSuccessful){
                 val images = processImages(serverResponse.body())
+                if(pageNumber == 1) {
+                    Log.d(TAG,"Networking getImages() data-deletion pageNumber $pageNumber")
+                    deleteAllFromLocalDb()
+                }
                 insertImagesToDb(images, imagesLiveData)
                 imagesLiveData.postValue(Resource.success("images from server",images))
             } else getPhotoFromDb(imagesLiveData)
@@ -88,6 +92,13 @@ class Repository @Inject constructor(val apiService: ApiService, private val app
             }catch (exp: Exception){
                 liveData.postValue(Resource.error("Error on getting data from db",null))
             }
+        }
+    }
+
+    private fun deleteAllFromLocalDb(){
+        Log.d(TAG,"Networking data-deletion deleteAllFromLocalDb() deleting all from local db")
+        CoroutineScope(Dispatchers.IO).launch {
+            appDatabase.galleryDao().clearAll()
         }
     }
 

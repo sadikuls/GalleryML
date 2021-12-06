@@ -1,9 +1,6 @@
 package com.sadikul.gallerymlbd.data.local.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.sadikul.gallerymlbd.data.local.entity.GalleryItemEntity
 
 @Dao
@@ -17,4 +14,7 @@ interface GalleryDao{
 
     @Query("select * from gallery")
     suspend fun getAllPhotos() : List<GalleryItemEntity>
+
+    @Query("delete from gallery")
+    suspend fun clearAll()
 }

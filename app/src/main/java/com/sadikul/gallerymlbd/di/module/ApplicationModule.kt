@@ -10,6 +10,7 @@ import com.pactice.hild_mvvm_room.dada.api.ApiService
 import com.sadikul.gallerymlbd.BuildConfig
 import com.sadikul.gallerymlbd.data.local.AppDatabase
 import com.sadikul.gallerymlbd.utils.Constants
+import com.sadikul.gallerymlbd.utils.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,6 +38,10 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun provideApiHelper(apiHelper: ApiHelperImpl): ApiHelper = apiHelper
+
+    @Provides
+    @Singleton
+    fun providePreferenceManager(@ApplicationContext appContext: Context): PreferenceManager = PreferenceManager.getInstance(appContext)
 
     @Provides
     @Singleton
